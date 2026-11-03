@@ -31,9 +31,9 @@ h1{font-size:20px;margin:0 0 4px}
 p.sub{margin:0 0 16px;color:var(--mute);font-size:13px}
 #wrap{display:grid;gap:4px;max-width:100%}
 .clue{display:flex;align-items:center;justify-content:center;font-size:var(--fs,15px);font-weight:700;line-height:1.1;color:var(--fg)}
-.clue.col{flex-direction:column;justify-content:flex-end;padding-bottom:2px}
+.clue.col{flex-direction:column;justify-content:flex-end;padding-bottom:2px;gap:calc(var(--cg,6px)*.5)}
 .clue.row{gap:var(--cg,6px);justify-content:flex-end;padding-right:6px}
-.clue.done{color:var(--mute);opacity:.5;text-decoration:line-through}
+.clue span.done{color:var(--mute);opacity:.45;text-decoration:line-through}
 .cell{width:var(--cs,clamp(48px,14vw,64px));aspect-ratio:1;background:var(--cell);border:var(--bw,2px) solid var(--line);border-radius:0;display:flex;align-items:center;justify-content:center;font-size:calc(var(--cs,56px)*.45);font-weight:700;-webkit-text-stroke:.35px currentColor;color:var(--mute);cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:background .12s}
 .cell.on{background:var(--fill);border-color:var(--fill)}
 .win .cell.on{background:var(--fill)}
@@ -63,6 +63,13 @@ button.sel{border-color:var(--accent);background:var(--accent);color:#fff}
 .mini i{aspect-ratio:1;background:var(--line);opacity:.35;border-radius:0}
 .cell.lc{cursor:default}
 .cell.rc{box-shadow:inset 0 0 0 100px rgba(138,140,255,.2)}
+.cell.cnt{box-shadow:inset 0 0 0 100px rgba(127,217,255,.3);outline:2px dashed rgba(255,255,255,.9);outline-offset:-4px}
+#cntBadge{position:fixed;z-index:60;background:var(--accent);color:#fff;font-weight:800;font-size:18px;line-height:1;border-radius:999px;padding:5px 12px;pointer-events:none;transform:translate(-50%,-100%);box-shadow:0 2px 10px rgba(0,0,0,.35)}
+#cntFab{display:none;position:fixed;left:calc(14px + env(safe-area-inset-left,0px));bottom:calc(138px + env(safe-area-inset-bottom,0px));width:76px;height:76px;border-radius:50%;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:26px;line-height:1;padding:0;z-index:50;touch-action:manipulation;user-select:none;-webkit-user-select:none;border:3px solid var(--accent);background:var(--cell);color:var(--fg);box-shadow:0 4px 14px rgba(0,0,0,.2)}
+#cntFab small{font-size:10px}
+#cntFab.on{background:var(--accent);color:#fff}
+#cntFab b{font-size:28px}
+@media (pointer:coarse){#cntFab:not([hidden]){display:flex}}
 .cell.cur{border-color:var(--accent);outline:3px solid var(--accent);outline-offset:-3px;position:relative;z-index:1}
 .cell{position:relative}
 .cell.sr::after{content:"";position:absolute;top:-2px;bottom:-2px;right:-2px;width:2px;background:var(--sep);pointer-events:none}
@@ -87,6 +94,8 @@ button:disabled{opacity:.4;cursor:default}
 <body>
 <h1>🐶 <span id="secretPi">ピ</span>クロス</h1>
 <p class="sub" id="subtitle">あそび方をえらんでね</p>
+<button id="cntFab" hidden>🔢<small>数える</small></button>
+<div id="cntBadge" hidden></div>
 <button id="holdX" hidden>✕<small>押しながら</small></button>
 <div id="homeBar" class="row-btns" style="margin:0 0 12px" hidden><button id="goHome">🏠 ホーム</button></div>
 <div id="home" class="pane"><div class="homebtns">
@@ -104,6 +113,7 @@ button:disabled{opacity:.4;cursor:default}
   <button id="mFill" class="sel">■ 塗る</button>
   <button id="mX">✕ 印</button>
   <button id="mInput">🖱 マウス操作</button>
+  <button id="mCount">🔢 数える</button>
   <button id="undo" disabled>↩ 戻る（0）</button>
   <button id="reset">リセット</button>
 </div>
@@ -249,7 +259,7 @@ const PUZZLES=[
  {n:"にわとり",e:"🐔",g:toG(["0010000000", "0111000000", "1101100010", "0111100110", "0011111011", "0011111111", "0011111110", "0001111100", "0000101000", "0000101000"])},
  {n:"ミルク缶",e:"🥛",g:toG(["0001111000", "0011111100", "0001111000", "0011111100", "0111111110", "1111111110", "0111011110", "0111111110", "0111111110", "0011111100"])},
  {n:"バイオリン",e:"🎻",g:toG(["0000000011", "0000000110", "0000011100", "0000011000", "0011010000", "0111100000", "0011100000", "0111110000", "1111111000", "0111110000"])},
- {n:"威嚇するレッサーパンダ",e:"🐾",g:toG(["011100000001100", "011110000011110", "011111111111110", "011111111111110", "011101111101110", "011111111111110", "001110111011100", "101110000011101", "101101010101101", "110111000111011", "010111000111010", "001011111110101", "000111111111011", "000110111011010", "001110111011110"])},
+ {n:"威嚇するレッサーパンダ",e:"🐾",g:toG(["000110000011000", "101111111111000", "111111111111101", "111110111011111", "111111111111111", "110011000110111", "011001101100110", "001111111111100", "000111111111100", "000111111111000", "000011111110000", "000011111110000", "000110111011000", "000110111011000", "001111000101100"])},
  {n:"自転車",e:"🚲",g:toG(["000000000000000", "000000000011100", "000011111010000", "000000100010000", "000000111110000", "000000100010000", "000000100010000", "000001100110000", "001111011011100", "010011011101110", "100010111000001", "110111111001001", "100001101000001", "010001000110010", "001110000011100"])},
  {n:"なまけもの",e:"🦥",g:toG(["011111111111111", "010010000100010", "011011000110110", "001101111101100", "001101010101100", "000101111101000", "000110111011000", "000011111110000", "000111111111000", "001101111101100", "001001111100100", "001001101100110", "001001101100100", "001101000101110", "011101101101010"])}
 ];
@@ -267,9 +277,9 @@ function sizeGrid(el){
   const big=N>5,huge=N>10;
   el.style.gridTemplateColumns=`auto repeat(${N},auto)`;
   el.style.gap=big?"2px":"4px";
-  el.style.setProperty("--cs",huge?"min(4.4vw,22px)":big?"min(7.2vw,32px)":"clamp(48px,14vw,64px)");
+  el.style.setProperty("--cs",huge?"min(4.1vw,22px)":big?"min(7.2vw,32px)":"clamp(48px,14vw,64px)");
   el.style.setProperty("--fs",huge?"10px":big?"12px":"15px");
-  el.style.setProperty("--cg",big?"2px":"6px");
+  el.style.setProperty("--cg",huge?"6px":big?"7px":"12px");
   el.style.setProperty("--bw",huge?"1px":big?"1.5px":"2px");
   el.style.setProperty("--br",huge?"3px":big?"4px":"8px");
 }
@@ -277,11 +287,12 @@ const runs=a=>{const r=[];let c=0;a.forEach(v=>{if(v)c++;else if(c){r.push(c);c=
 const calc=g=>[g.map(runs),[...Array(N)].map((_,j)=>runs(g.map(r=>r[j])))];
 let [rowC,colC]=calc(SOL);
 let state,mode="fill",inputMode="mouse",kbHold=null,curI=null,curJ=null,hist=[],curAct=null;
+let counting=false,cntTotal=0,cntVisited=new Set(),cntLast=null;
 const wrap=document.getElementById("wrap");
 wrap.style.gridTemplateColumns=`auto repeat(${N},auto)`;
 function build(){
   state=[...Array(N)].map(()=>Array(N).fill(0));
-  sizeGrid(wrap);curI=null;curJ=null;hist=[];curAct=null;wrap.innerHTML="";wrap.classList.remove("win");finished=false;updateUndoBtn();
+  sizeGrid(wrap);curI=null;curJ=null;hist=[];curAct=null;setCounting(false);wrap.innerHTML="";wrap.classList.remove("win");finished=false;updateUndoBtn();
   document.getElementById("msg").textContent="";
   wrap.appendChild(document.createElement("div"));
   colC.forEach((c,j)=>{const d=document.createElement("div");d.className="clue col";d.id="c"+j;d.innerHTML=c.map(n=>`<span>${n}</span>`).join("");wrap.appendChild(d)});
@@ -302,15 +313,54 @@ function tap(i,j){
   check();
 }
 const same=(a,b)=>a.length===b.length&&a.every((v,k)=>v===b[k]);
+// ある行（列）の数字のうち、すでに塗り終わった数字を調べる
+function clueDone(cells,clue){
+  const n=cells.length,m=clue.length,done=Array(m).fill(false);
+  if(clue[0]===0){if(!cells.some(v=>v))done[0]=true;return done}
+  const rs=[];let st=-1;
+  for(let t=0;t<=n;t++){
+    if(t<n&&cells[t]){if(st<0)st=t}
+    else if(st>=0){rs.push([st,t-1]);st=-1}
+  }
+  if(!rs.length)return done;
+  const pre=[0];for(let k=0;k<m;k++)pre.push(pre[k]+clue[k]);
+  const canFit=(r,k)=>{
+    if(r[1]-r[0]+1>clue[k])return false;
+    if(pre[k]+k>r[0])return false;
+    if(r[1]+1+(pre[m]-pre[k+1])+(m-1-k)>n)return false;
+    return true;
+  };
+  let inter=null;const assign=[];
+  (function rec(ri,kmin){
+    if(ri===rs.length){
+      const ex=new Set();
+      assign.forEach((k,idx)=>{if(rs[idx][1]-rs[idx][0]+1===clue[k])ex.add(k)});
+      inter=inter===null?ex:new Set([...inter].filter(x=>ex.has(x)));
+      return;
+    }
+    for(let k=kmin;k<m;k++){
+      if(!canFit(rs[ri],k))continue;
+      if(ri>0){
+        const pk=assign[ri-1],need=1+(pre[k]-pre[pk+1])+(k-pk-1);
+        if(rs[ri][0]-rs[ri-1][1]-1<need)continue;
+      }
+      assign[ri]=k;rec(ri+1,k+1);
+      if(inter&&inter.size===0)return;
+    }
+  })(0,0);
+  if(inter)inter.forEach(k=>done[k]=true);
+  return done;
+}
+function markClue(el,done){const sp=el.children;for(let t=0;t<sp.length;t++)sp[t].classList.toggle("done",!!done[t])}
 function check(){
   let all=true;
   for(let i=0;i<N;i++){
-    const ok=same(runs(state[i].map(v=>v===1?1:0)),rowC[i]);
-    document.getElementById("r"+i).classList.toggle("done",ok);all=all&&ok;
+    const cells=state[i].map(v=>v===1?1:0),ok=same(runs(cells),rowC[i]);
+    markClue(document.getElementById("r"+i),ok?rowC[i].map(()=>true):clueDone(cells,rowC[i]));all=all&&ok;
   }
   for(let j=0;j<N;j++){
-    const ok=same(runs(state.map(r=>r[j]===1?1:0)),colC[j]);
-    document.getElementById("c"+j).classList.toggle("done",ok);all=all&&ok;
+    const cells=state.map(r=>r[j]===1?1:0),ok=same(runs(cells),colC[j]);
+    markClue(document.getElementById("c"+j),ok?colC[j].map(()=>true):clueDone(cells,colC[j]));all=all&&ok;
   }
   if(all){
     wrap.classList.add("win");
@@ -380,6 +430,33 @@ function celebrate(){
   setTimeout(close,1100);
 }
 /* ---- ドラッグ入力 ---- */
+function cntRender(){
+  const mb=document.getElementById("mCount"),fab=document.getElementById("cntFab"),bd=document.getElementById("cntBadge");
+  mb.classList.toggle("sel",counting);
+  mb.textContent=counting?`🔢 数える中：${cntTotal}（押して終了）`:"🔢 数える";
+  fab.classList.toggle("on",counting);
+  fab.innerHTML=counting?`<b>${cntTotal}</b><small>タップで終了</small>`:"🔢<small>数える</small>";
+  if(counting&&cntLast){
+    const r=document.getElementById(`x${cntLast[0]}_${cntLast[1]}`).getBoundingClientRect();
+    bd.hidden=false;bd.textContent=cntTotal;
+    bd.style.left=Math.min(innerWidth-20,Math.max(20,r.left+r.width/2))+"px";
+    bd.style.top=Math.max(34,r.top-4)+"px";
+  }else bd.hidden=true;
+}
+function setCounting(v){
+  counting=v;cntTotal=0;cntVisited=new Set();cntLast=null;
+  if(typeof wrap!=="undefined")wrap.querySelectorAll(".cnt").forEach(e=>e.classList.remove("cnt"));
+  cntRender();
+}
+function countCell(i,j){
+  const key=i+","+j;
+  if(cntVisited.has(key))return;
+  cntVisited.add(key);cntTotal++;cntLast=[i,j];
+  document.getElementById(`x${i}_${j}`).classList.add("cnt");
+  cntRender();
+}
+document.getElementById("mCount").onclick=()=>{if(!finished)setCounting(!counting)};
+document.getElementById("cntFab").onclick=()=>{if(!finished)setCounting(!counting)};
 let dragV=null,dragPid=null,dragWant=1,dragAxis=null,dragLast=0,dragI=0,dragJ=0,dragX0=0,dragY0=0,dragCX=0,dragCY=0;
 function clearCursor(){wrap.querySelectorAll(".rc,.cur").forEach(e=>e.classList.remove("rc","cur"))}
 function setCursor(i,j){
@@ -417,8 +494,11 @@ wrap.addEventListener("pointerdown",e=>{
   const rc0=document.getElementById(`x${i}_${j}`).getBoundingClientRect();
   dragCX=rc0.left+rc0.width/2;dragCY=rc0.top+rc0.height/2;
   setCursor(i,j);
+  if(counting){dragV=2;cntVisited=new Set();countCell(i,j)}
+  else{
   beginAct();
   if(state[i][j]===want){dragV=0;paint(i,j,0)}else{dragV=1;paint(i,j,want)}
+  }
 });
 window.addEventListener("pointermove",e=>{
   if(dragV===null){
@@ -440,7 +520,8 @@ window.addEventListener("pointermove",e=>{
   const step=idx>dragLast?1:-1;
   for(let t=dragLast+step;;t+=step){
     const i=dragAxis==="h"?dragI:t,j=dragAxis==="h"?t:dragJ,cur=state[i][j];
-    if(dragV===1&&cur===0)paint(i,j,dragWant);
+    if(dragV===2)countCell(i,j);
+    else if(dragV===1&&cur===0)paint(i,j,dragWant);
     else if(dragV===0&&cur===dragWant)paint(i,j,0);
     if(finished)break;
     if(t===idx)break;
@@ -478,7 +559,7 @@ window.addEventListener("keydown",e=>{
     if(kbHold)kbApply(ni,nj);
     return;
   }
-  if((e.code==="KeyD"||e.code==="KeyF")&&!e.repeat){
+  if((e.code==="KeyD"||e.code==="KeyF")&&!e.repeat&&!counting){
     e.preventDefault();
     if(curI===null)setCursor(0,0);
     const want=e.code==="KeyD"?1:2;
@@ -633,7 +714,7 @@ document.getElementById("cDone").onclick=()=>{
       cm.style.color="var(--accent)";box.hidden=true;
       cm.textContent="⚠️ 調べるのに時間がかかりすぎたよ。絵を少し変えてみてね";
     }else if(sols.length===1){
-      cm.style.color="";cm.innerHTML=`✅ 答えは1通りだけ！<br>題名をつけて保存できるよ（${customs.length}/3）`;box.hidden=false;
+      cm.style.color="";cm.innerHTML=`✅ 答えは1通りだけ！<br>題名をつけて保存できるよ（${N}×${N}：${customs.filter(c=>c.g.length===N).length}/${MAXC}）`;box.hidden=false;
     }else{
       const alt=sols.find(s=>!s.every((r,i)=>same(r,draw[i])))||sols[0];
       const pic=alt.map(r=>r.map(v=>v?"■":"□").join("")).join("<br>");
@@ -655,6 +736,8 @@ function show(w){
   Object.entries(ids).forEach(([k,id])=>{document.getElementById(id).hidden=w!==k});
   document.getElementById("homeBar").hidden=w==="home";
   document.getElementById("holdX").hidden=w!=="play";
+  document.getElementById("cntFab").hidden=w!=="play";
+  if(w!=="play")setCounting(false);
   if(w==="play"&&inputMode==="kb"&&curI===null&&!finished)setCursor(0,0);
   document.getElementById("subtitle").hidden=w!=="home";
 }
@@ -667,6 +750,7 @@ renderMkBar();buildMake();
 let showAns=false;
 let cleared=new Set();
 try{cleared=new Set(JSON.parse(localStorage.getItem("picross-cleared")||"[]"))}catch(e){}
+const MAXC=5; // レベル（サイズ）ごとの保存上限
 let customs=[];
 try{customs=JSON.parse(localStorage.getItem("picross-custom")||"[]")}catch(e){}
 const saveCustoms=()=>{try{localStorage.setItem("picross-custom",JSON.stringify(customs))}catch(e){}};
@@ -713,10 +797,10 @@ function renderMenu(){
 document.getElementById("cSave").onclick=()=>{
   const t=document.getElementById("title").value.trim();
   if(!t){cm.textContent="題名を入れてね";return}
-  if(customs.length>=3){cm.textContent="保存できるのは3問までだよ。「あそぶ」の画面で一つ削除してね";return}
+  if(customs.filter(c=>c.g.length===N).length>=MAXC){cm.textContent=`${N}×${N}で保存できるのは${MAXC}問までだよ。「あそぶ」の画面で一つ削除してね`;return}
   customs.push({id:Date.now(),n:t,g:draw.map(r=>r.join(""))});saveCustoms();
   document.getElementById("title").value="";document.getElementById("saveBox").hidden=true;
-  cm.style.color="";cm.textContent=`「${t}」を保存したよ！「あそぶ」から選べるよ（${customs.length}/3）`;
+  cm.style.color="";cm.textContent=`「${t}」を保存したよ！「あそぶ」から選べるよ（${N}×${N}：${customs.filter(c=>c.g.length===N).length}/${MAXC}）`;
 };
 document.getElementById("back").onclick=()=>{renderMenu();show("menu")};
 /* ---- まなぶモード ---- */
