@@ -40,9 +40,9 @@ p.sub{margin:0 0 16px;color:var(--mute);font-size:13px}
 .modes{display:flex;gap:8px;margin:18px 0 10px;flex-wrap:wrap;justify-content:center}
 #kbHint{font-size:12px;color:var(--mute);text-align:center;margin:0}
 @media (pointer:coarse){#kbHint{display:none}}
-#holdX{display:none;position:fixed;left:calc(14px + env(safe-area-inset-left,0px));bottom:calc(28px + env(safe-area-inset-bottom,0px));width:84px;height:84px;border-radius:50%;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:30px;line-height:1;padding:0;z-index:50;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;border:3px solid var(--accent);background:var(--cell);color:var(--fg);box-shadow:0 4px 14px rgba(0,0,0,.2)}
-#holdX small{font-size:10px}
-#holdX.on{background:var(--accent);color:#fff}
+#holdX{display:none;position:fixed;left:calc(10px + env(safe-area-inset-left,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));width:58px;height:58px;border-radius:50%;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:21px;opacity:.6;line-height:1;padding:0;z-index:50;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;border:2px solid var(--accent);background:var(--cell);color:var(--fg);box-shadow:0 2px 8px rgba(0,0,0,.2)}
+#holdX small{font-size:8px}
+#holdX.on{background:var(--accent);color:#fff;opacity:.85}
 @media (pointer:coarse){#holdX:not([hidden]){display:flex}}
 button{font:inherit;font-size:14px;padding:10px 16px;border-radius:999px;border:2px solid var(--line);background:var(--cell);color:var(--fg);cursor:pointer}
 button.sel{border-color:var(--accent);background:var(--accent);color:#fff}
@@ -65,10 +65,10 @@ button.sel{border-color:var(--accent);background:var(--accent);color:#fff}
 .cell.rc{box-shadow:inset 0 0 0 100px rgba(138,140,255,.2)}
 .cell.cnt{box-shadow:inset 0 0 0 100px rgba(127,217,255,.3);outline:2px dashed rgba(255,255,255,.9);outline-offset:-4px}
 #cntBadge{position:fixed;z-index:60;background:var(--accent);color:#fff;font-weight:800;font-size:18px;line-height:1;border-radius:999px;padding:5px 12px;pointer-events:none;transform:translate(-50%,-100%);box-shadow:0 2px 10px rgba(0,0,0,.35)}
-#cntFab{display:none;position:fixed;left:calc(14px + env(safe-area-inset-left,0px));bottom:calc(138px + env(safe-area-inset-bottom,0px));width:76px;height:76px;border-radius:50%;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:26px;line-height:1;padding:0;z-index:50;touch-action:manipulation;user-select:none;-webkit-user-select:none;border:3px solid var(--accent);background:var(--cell);color:var(--fg);box-shadow:0 4px 14px rgba(0,0,0,.2)}
-#cntFab small{font-size:10px}
-#cntFab.on{background:var(--accent);color:#fff}
-#cntFab b{font-size:28px}
+#cntFab{display:none;position:fixed;left:calc(10px + env(safe-area-inset-left,0px));bottom:calc(92px + env(safe-area-inset-bottom,0px));width:58px;height:58px;border-radius:50%;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:20px;opacity:.6;line-height:1;padding:0;z-index:50;touch-action:manipulation;user-select:none;-webkit-user-select:none;border:3px solid var(--accent);background:var(--cell);color:var(--fg);box-shadow:0 4px 14px rgba(0,0,0,.2)}
+#cntFab small{font-size:8px}
+#cntFab.on{background:var(--accent);color:#fff;opacity:.85}
+#cntFab b{font-size:20px}
 @media (pointer:coarse){#cntFab:not([hidden]){display:flex}}
 .cell.cur{border-color:var(--accent);outline:3px solid var(--accent);outline-offset:-3px;position:relative;z-index:1}
 .cell{position:relative}
@@ -89,6 +89,16 @@ input#title{font:inherit;font-size:15px;padding:10px 14px;border-radius:999px;bo
 .row-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:18px}
 button:disabled{opacity:.4;cursor:default}
 #msg,#cmsg{min-height:56px;font-size:18px;font-weight:700;color:var(--okc);text-align:center;margin-top:8px}
+/* ---- スマホ（タッチ操作）の下のボタン配置：画面の下に固定した操作バー ---- */
+@media (pointer:coarse){
+  #play{padding-bottom:140px}
+  .modes{position:fixed;left:0;right:0;bottom:0;z-index:40;margin:0;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px)) 142px;display:grid;grid-template-columns:1fr 1fr;gap:6px;background:rgba(9,13,34,.94);border-top:1px solid var(--line)}
+  .modes button{padding:9px 4px;font-size:13px;line-height:1.15;white-space:normal;min-height:42px}
+  #mInput,#mCount{display:none}
+  #holdX,#cntFab{opacity:.92;bottom:calc(12px + env(safe-area-inset-bottom,0px));left:calc(8px + env(safe-area-inset-left,0px))}
+  #cntFab{left:calc(74px + env(safe-area-inset-left,0px))}
+  #holdX.on,#cntFab.on{opacity:1}
+}
 </style>
 </head>
 <body>
@@ -257,8 +267,8 @@ const PUZZLES=[
  {n:"メガネ",e:"👓",g:toG(["1000000000", "1111000000", "1001000000", "1001000000", "1111111110", "0000110010", "0000010010", "0000011110", "0000000010", "0000000001"])},
  {n:"ながぐつ",e:"👢",g:toG(["0111100000", "0111100000", "0111100000", "0111100000", "0111110000", "0111111000", "0111111110", "0111111111", "1111111111", "0000000000"])},
  {n:"にわとり",e:"🐔",g:toG(["0010000000", "0111000000", "1101100010", "0111100110", "0011111011", "0011111111", "0011111110", "0001111100", "0000101000", "0000101000"])},
- {n:"ミルク缶",e:"🥛",g:toG(["0001111000", "0011111100", "0001111000", "0011111100", "0111111110", "1111111110", "0111011110", "0111111110", "0111111110", "0011111100"])},
- {n:"バイオリン",e:"🎻",g:toG(["0000000011", "0000000110", "0000011100", "0000011000", "0011010000", "0111100000", "0011100000", "0111110000", "1111111000", "0111110000"])},
+ {n:"ミルク缶",e:"🥛",g:toG(["0011111100", "0010000100", "0011111100", "0011111100", "0111111111", "1111111110", "0111111111", "0110000110", "0110000110", "1111111111"])},
+ {n:"バイオリン",e:"🎻",g:toG(["0000000011", "0000000011", "0000000110", "0000111100", "0001111000", "0011011000", "0111111000", "1101110000", "1111110000", "0111100000"])},
  {n:"威嚇するレッサーパンダ",e:"🐾",g:toG(["000110000011000", "101111111111000", "111111111111101", "111110111011111", "111111111111111", "110011000110111", "011001101100110", "001111111111100", "000111111111100", "000111111111000", "000011111110000", "000011111110000", "000110111011000", "000110111011000", "001111000101100"])},
  {n:"自転車",e:"🚲",g:toG(["000000000000000", "000000000011100", "000011111010000", "000000100010000", "000000111110000", "000000100010000", "000000100010000", "000001100110000", "001111011011100", "010011011101110", "100010111000001", "110111111001001", "100001101000001", "010001000110010", "001110000011100"])},
  {n:"なまけもの",e:"🦥",g:toG(["011111111111111", "010010000100010", "011011000110110", "001101111101100", "001101010101100", "000101111101000", "000110111011000", "000011111110000", "000111111111000", "001101111101100", "001001111100100", "001001101100110", "001001101100100", "001101000101110", "011101101101010"])}
@@ -740,6 +750,7 @@ function show(w){
   if(w!=="play")setCounting(false);
   if(w==="play"&&inputMode==="kb"&&curI===null&&!finished)setCursor(0,0);
   document.getElementById("subtitle").hidden=w!=="home";
+  fitVisible();
 }
 document.getElementById("goHome").onclick=()=>show("home");
 tP.onclick=()=>{renderMenu();show("menu")};
@@ -931,6 +942,31 @@ lPrev.onclick=()=>{
 };
 document.getElementById("lback").onclick=()=>{renderLMenu();show("lmenu")};
 tL.onclick=()=>{renderLMenu();show("lmenu")};
+// ---- 画面の幅に合わせて、マスの大きさを自動で縮める ----
+function fitGrid(el){
+  const avail=document.documentElement.clientWidth-24;
+  for(let it=0;it<4;it++){
+    const w=Math.max(el.scrollWidth,el.getBoundingClientRect().width);
+    if(w<=avail)break;
+    const c=el.querySelector(".cell");if(!c)return;
+    const cs=parseFloat(getComputedStyle(c).width);
+    el.style.setProperty("--cs",Math.max(10,cs-(w-avail)/N-0.6)+"px");
+  }
+}
+function fitVisible(){
+  [["play",wrap],["learn",lw],["create",cw]].forEach(([id,el])=>{
+    if(document.getElementById(id).hidden)return;
+    sizeGrid(el);fitGrid(el);
+  });
+}
+{
+  const _b=build,_o=openLearn,_m=buildMake;
+  build=function(){_b();fitVisible()};
+  openLearn=function(p){_o(p);fitVisible()};
+  buildMake=function(){_m();fitVisible()};
+}
+window.addEventListener("resize",()=>requestAnimationFrame(fitVisible));
+window.addEventListener("orientationchange",()=>setTimeout(fitVisible,200));
 show("home");
 </script>
 </body>
